@@ -4,10 +4,7 @@ import asyncHandler from "../../utils/asyncHandler";
 import { ApiError } from "../../utils/ApiError";
 import { User } from "../../models/user.model";
 import { ApiResponse } from "../../utils/ApiResponse";
-import { CODE_EXPIRES_MINUTES } from "../../constants";
-import { generateVerificationCode } from "../../utils/generateVerificationCode";
 import { generateAccessTokenAndRefreshToken } from "../../helper/generateAccessTokenAndRefreshToken";
-import { sendVerificationEmailByGMAIL } from "../../email-templates/sendVerificationEmailByGMAIL";
 
 
 // *---------------- Register Admin ----------------
@@ -16,7 +13,7 @@ export const adminRegistrationController = asyncHandler(async (req: Request, res
 
   console.log({ fullName, email, password, phone, shopName, shopAddress })
 
-  if ([fullName, email, password, phone, shopName, shopAddress].some((field) => !field || field.trim() === "")) {
+  if ([fullName, email, password, phone].some((field) => !field || field.trim() === "")) {
     throw new ApiError(400, "All fields are required");
   }
 
@@ -29,9 +26,6 @@ export const adminRegistrationController = asyncHandler(async (req: Request, res
     throw new ApiError(400, "User already exists with this email");
   }
 
-  // Generate OTP
-  const verificationCode = generateVerificationCode();
-  const expiresAt = new Date(Date.now() + CODE_EXPIRES_MINUTES * 60 * 1000);
 
   // Create admin
   const admin = await User.create({
@@ -40,19 +34,14 @@ export const adminRegistrationController = asyncHandler(async (req: Request, res
     password,
     phone,
     role: "admin",
-    emailVerified: false,
-    emailVerificationCode: verificationCode,
-    emailVerificationCodeExpires: expiresAt,
+    emailVerified: true,
   });
-
-  // Send verification email
-  await sendVerificationEmailByGMAIL(email, verificationCode);
 
   return res.status(201).json(
     new ApiResponse(
       201,
       { email: admin.email },
-      "Account created. Verification code sent to your email"
+      "Account created successfully"
     )
   );
 });
