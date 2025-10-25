@@ -13,20 +13,26 @@ import path from "path";
 const app = express();
 
 // Your frontend origin
-// const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",").map(origin => origin.trim()) || [];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((o) => o.trim().toLowerCase());
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || process.env.ALLOWED_ORIGINS?.split(",").includes(origin)) {
+      if (!origin) return callback(null, true); // allow server-to-server or curl
+      const normalized = origin.toLowerCase().replace(/\/$/, ""); // remove trailing slash
+      if (allowedOrigins.includes(normalized)) {
         callback(null, true);
       } else {
+        console.warn(`🚫 Blocked CORS request from origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
   })
 );
+
 
 app.set("trust proxy", 1); //   Required when behind proxy (e.g. Webuzo/Nginx)
 
