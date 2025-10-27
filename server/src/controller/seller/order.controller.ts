@@ -85,7 +85,7 @@ export const getSellerOrders = asyncHandler(async (req: Request, res: Response) 
             as: "p",
             in: {
               _id: "$$p.product",
-              name: "$$p.name",
+              name: "$$p.title",
               quantity: "$$p.quantity",
               price: "$$p.price",
             },
