@@ -202,8 +202,6 @@ export const deleteProduct = asyncHandler(async (req: Request, res: Response) =>
 
   const user = await User.findById(userId);
   if (!user) throw new ApiError(404, "User not found");
-  if (user.role !== "seller") throw new ApiError(403, "Only sellers can delete products");
-
   const productId = req.params.id;
   const product = await Product.findById(productId);
   if (!product) throw new ApiError(404, "Product not found");
