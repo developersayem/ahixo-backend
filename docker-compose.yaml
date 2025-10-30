@@ -53,7 +53,7 @@ services:
     networks:
       - ahixo-net
     healthcheck:
-      test: ["CMD", "wget", "--spider", "http://localhost:5001/health"]
+      test: ["CMD-SHELL", "node -e 'require(\"http\").get(\"http://localhost:5001/health\",()=>{})'"]
       interval: 30s
       timeout: 10s
       retries: 5
