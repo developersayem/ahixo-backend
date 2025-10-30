@@ -5,7 +5,7 @@ const uri = process.env.MONGO_URI || "";
 export const connectDB = async (): Promise<void> => {
   const connect = async () => {
     try {
-      await mongoose.connect(uri, {
+      await mongoose.connect("mongodb://root:nMxImHBKBOrkzAgoEQ2p4oynmiB7xw5lVXk2O9qKUVtDwLfOLfRwjwiWbXTCfCcx@g4ow8cosw4w8k8k0o80sss00:27017/?directConnection=true@", {
         serverSelectionTimeoutMS: 5000, // fail fast if DB not reachable
         socketTimeoutMS: 45000,         // timeout for idle sockets
         heartbeatFrequencyMS: 10000,    // keep-alive interval
