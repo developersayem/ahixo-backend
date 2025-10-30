@@ -5,7 +5,7 @@ const uri = process.env.MONGO_URI || "";
 export const connectDB = async (): Promise<void> => {
   const connect = async () => {
     try {
-      await mongoose.connect("mongodb://ahixo:D3d46PeEl7dkFnhI@ahixo-db:27017/default?authSource=admin", {
+      await mongoose.connect(uri, {
         serverSelectionTimeoutMS: 5000, // fail fast if DB not reachable
         socketTimeoutMS: 45000,         // timeout for idle sockets
         heartbeatFrequencyMS: 10000,    // keep-alive interval
