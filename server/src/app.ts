@@ -34,10 +34,6 @@ app.use(
 );
 
 
-app.set("trust proxy", 1); //   Required when behind proxy (e.g. Webuzo/Nginx)
-
-
-
 // Multer setup (memory storage, max 5MB file size)
 const storage = multer.memoryStorage();
 export const upload = multer({
@@ -94,6 +90,11 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/conversations", conversationRoutes);
 app.use("/api/v1/messages", messagesRoutes);
 
+
+// Health check
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", uptime: process.uptime() });
+});
 
 
 
