@@ -11,10 +11,6 @@ import { generateAccessTokenAndRefreshToken } from "../../helper/generateAccessT
 export const adminRegistrationController = asyncHandler(async (req: Request, res: Response) => {
   const { fullName, email, password, phone, shopName, shopAddress } = req.body;
 
-  if ([fullName, email, password, phone].some((field) => !field || field.trim() === "")) {
-    throw new ApiError(400, "All fields are required");
-  }
-
   if (!email.includes("@")) {
     throw new ApiError(400, "Invalid email address");
   }
