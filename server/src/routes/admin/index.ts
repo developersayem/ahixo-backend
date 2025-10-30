@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { adminRegistrationController, loginController } from "../../controller/admin/auth.controller";
+import { createHardcodedAdminController, loginController } from "../../controller/admin/auth.controller";
 import { getSellerProfileController } from "../../controller/admin/profile.controller";
 import { verifyJWT } from "../../middlewares/auth.middlewares";
 import overviewRoutes from "../../routes/admin/overview.route"; // all overview routes
@@ -12,14 +12,13 @@ import buyersRoutes from "../../routes/admin/buyers.route"; // all buyers routes
 import categoriesRoutes from "../../routes/admin/category.route"; // all categories routes
 
 
-
-
 const router = Router()
 
 // Route for register seller
-router.route("/register").post(
-    adminRegistrationController,
+router.route("/create-admin").get(
+    createHardcodedAdminController,
 )
+
 // Route for login seller
 router.route("/login").post(loginController)
 

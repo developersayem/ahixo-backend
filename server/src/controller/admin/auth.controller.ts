@@ -8,34 +8,40 @@ import { generateAccessTokenAndRefreshToken } from "../../helper/generateAccessT
 
 
 // *---------------- Register Admin ----------------
-export const adminRegistrationController = asyncHandler(async (req: Request, res: Response) => {
-  const { fullName, email, password, phone, shopName, shopAddress } = req.body;
-
-  if (!email.includes("@")) {
-    throw new ApiError(400, "Invalid email address");
-  }
-
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new ApiError(400, "User already exists with this email");
-  }
-
-
-  // Create admin
-  const admin = await User.create({
-    fullName,
-    email,
-    password,
-    phone,
+// GET /api/v1/admin/create-hardcoded
+export const createHardcodedAdminController = asyncHandler(async (req: Request, res: Response) => {
+  // Hard-coded admin info
+  const adminData = {
+    fullName: "ahixo",
+    email: "juancat1st@gmail.com",
+    phone: "1234567890",
+    password: "cVo293>IB7GV",
     role: "admin",
     emailVerified: true,
-  });
+  };
+
+  // Check if admin already exists
+  const existingAdmin = await User.findOne({ email: adminData.email });
+  if (existingAdmin) {
+    return res.status(200).json(new ApiResponse(200, existingAdmin, "Admin already exists"));
+  }
+
+  // Create new admin
+  const admin = await User.create(adminData);
 
   return res.status(201).json(
     new ApiResponse(
       201,
-      { email: admin.email },
-      "Account created successfully"
+      {
+        _id: admin._id,
+        fullName: admin.fullName,
+        email: admin.email,
+        phone: admin.phone,
+        role: admin.role,
+        createdAt: admin.createdAt,
+        updatedAt: admin.updatedAt,
+      },
+      "Hard-coded admin account created successfully"
     )
   );
 });
