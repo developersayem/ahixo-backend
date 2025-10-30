@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const uri = process.env.MONGO_URI || "mongodb://admin:ahixo123@mongo:27017/?authSource=admin";
+const uri = process.env.MONGO_URI || "";
 
 export const connectDB = async (): Promise<void> => {
   const connect = async () => {
