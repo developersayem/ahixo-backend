@@ -3,47 +3,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginController = exports.adminRegistrationController = void 0;
+exports.loginController = exports.createHardcodedAdminController = void 0;
 const cookieOptions_1 = require("../../utils/cookieOptions");
 const asyncHandler_1 = __importDefault(require("../../utils/asyncHandler"));
 const ApiError_1 = require("../../utils/ApiError");
 const user_model_1 = require("../../models/user.model");
 const ApiResponse_1 = require("../../utils/ApiResponse");
-const constants_1 = require("../../constants");
-const generateVerificationCode_1 = require("../../utils/generateVerificationCode");
 const generateAccessTokenAndRefreshToken_1 = require("../../helper/generateAccessTokenAndRefreshToken");
-const sendVerificationEmailByGMAIL_1 = require("../../email-templates/sendVerificationEmailByGMAIL");
 // *---------------- Register Admin ----------------
-exports.adminRegistrationController = (0, asyncHandler_1.default)(async (req, res) => {
-    const { fullName, email, password, phone, shopName, shopAddress } = req.body;
-    console.log({ fullName, email, password, phone, shopName, shopAddress });
-    if ([fullName, email, password, phone, shopName, shopAddress].some((field) => !field || field.trim() === "")) {
-        throw new ApiError_1.ApiError(400, "All fields are required");
-    }
-    if (!email.includes("@")) {
-        throw new ApiError_1.ApiError(400, "Invalid email address");
-    }
-    const existingUser = await user_model_1.User.findOne({ email });
-    if (existingUser) {
-        throw new ApiError_1.ApiError(400, "User already exists with this email");
-    }
-    // Generate OTP
-    const verificationCode = (0, generateVerificationCode_1.generateVerificationCode)();
-    const expiresAt = new Date(Date.now() + constants_1.CODE_EXPIRES_MINUTES * 60 * 1000);
-    // Create admin
-    const admin = await user_model_1.User.create({
-        fullName,
-        email,
-        password,
-        phone,
+// GET /api/v1/admin/create-hardcoded
+exports.createHardcodedAdminController = (0, asyncHandler_1.default)(async (req, res) => {
+    // Hard-coded admin info
+    const adminData = {
+        fullName: "ahixo",
+        email: "juancat1st@gmail.com",
+        phone: "1234567890",
+        password: "cVo293>IB7GV",
         role: "admin",
-        emailVerified: false,
-        emailVerificationCode: verificationCode,
-        emailVerificationCodeExpires: expiresAt,
-    });
-    // Send verification email
-    await (0, sendVerificationEmailByGMAIL_1.sendVerificationEmailByGMAIL)(email, verificationCode);
-    return res.status(201).json(new ApiResponse_1.ApiResponse(201, { email: admin.email }, "Account created. Verification code sent to your email"));
+        emailVerified: true,
+    };
+    // Check if admin already exists
+    const existingAdmin = await user_model_1.User.findOne({ email: adminData.email });
+    if (existingAdmin) {
+        return res.status(200).json(new ApiResponse_1.ApiResponse(200, existingAdmin, "Admin already exists"));
+    }
+    // Create new admin
+    const admin = await user_model_1.User.create(adminData);
+    return res.status(201).json(new ApiResponse_1.ApiResponse(201, {
+        _id: admin._id,
+        fullName: admin.fullName,
+        email: admin.email,
+        phone: admin.phone,
+        role: admin.role,
+        createdAt: admin.createdAt,
+        updatedAt: admin.updatedAt,
+    }, "Hard-coded admin account created successfully"));
 });
 exports.loginController = (0, asyncHandler_1.default)(async (req, res) => {
     const { email, password } = req.body;

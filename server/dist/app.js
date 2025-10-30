@@ -15,19 +15,24 @@ const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 exports.app = app;
 // Your frontend origin
-// const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",").map(origin => origin.trim()) || [];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((o) => o.trim().toLowerCase());
 app.use((0, cors_1.default)({
     origin: (origin, callback) => {
-        if (!origin || process.env.ALLOWED_ORIGINS?.split(",").includes(origin)) {
+        if (!origin)
+            return callback(null, true); // allow server-to-server or curl
+        const normalized = origin.toLowerCase().replace(/\/$/, ""); // remove trailing slash
+        if (allowedOrigins.includes(normalized)) {
             callback(null, true);
         }
         else {
+            console.warn(`🚫 Blocked CORS request from origin: ${origin}`);
             callback(new Error("Not allowed by CORS"));
         }
     },
     credentials: true,
 }));
-app.set("trust proxy", 1); //   Required when behind proxy (e.g. Webuzo/Nginx)
 // Multer setup (memory storage, max 5MB file size)
 const storage = multer_1.default.memoryStorage();
 exports.upload = (0, multer_1.default)({
@@ -71,5 +76,9 @@ app.use("/api/v1/seller", index_3.default);
 app.use("/api/v1/admin", index_5.default);
 app.use("/api/v1/conversations", conversations_route_1.default);
 app.use("/api/v1/messages", message_routes_1.default);
+// Health check
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", uptime: process.uptime() });
+});
 // custom error middlewares
 app.use(error_middlewares_1.errorHandler);

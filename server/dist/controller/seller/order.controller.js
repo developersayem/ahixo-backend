@@ -79,7 +79,7 @@ exports.getSellerOrders = (0, asyncHandler_1.default)(async (req, res) => {
                         as: "p",
                         in: {
                             _id: "$$p.product",
-                            name: "$$p.name",
+                            name: "$$p.title",
                             quantity: "$$p.quantity",
                             price: "$$p.price",
                         },

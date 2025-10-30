@@ -159,8 +159,6 @@ exports.deleteProduct = (0, asyncHandler_1.default)(async (req, res) => {
     const user = await user_model_1.User.findById(userId);
     if (!user)
         throw new ApiError_1.ApiError(404, "User not found");
-    if (user.role !== "seller")
-        throw new ApiError_1.ApiError(403, "Only sellers can delete products");
     const productId = req.params.id;
     const product = await product_model_1.Product.findById(productId);
     if (!product)

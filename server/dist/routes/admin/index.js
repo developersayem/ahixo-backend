@@ -16,7 +16,7 @@ const buyers_route_1 = __importDefault(require("../../routes/admin/buyers.route"
 const category_route_1 = __importDefault(require("../../routes/admin/category.route")); // all categories routes
 const router = (0, express_1.Router)();
 // Route for register seller
-router.route("/register").post(auth_controller_1.adminRegistrationController);
+router.route("/create-admin").get(auth_controller_1.createHardcodedAdminController);
 // Route for login seller
 router.route("/login").post(auth_controller_1.loginController);
 // Route For seller profile
